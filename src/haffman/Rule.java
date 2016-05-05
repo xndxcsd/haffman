@@ -18,10 +18,11 @@ public class Rule {
 
 //    private List rule;
 
-    private LinkedHashMap<String,Integer> map;
+    private HashMap<String,Integer> map;
 
     //the haffmantree mapped by the text;
     private HaffmanTree tree ;
+
 
 
     //the rules that code;
@@ -52,43 +53,88 @@ public class Rule {
     public Rule() {
     }
 
+//    private class Node{
+//        String text;
+//        int f;
+//
+//        public Node(String text, int f) {
+//            this.text = text;
+//            this.f = f;
+//        }
+//
+//        public int getF() {
+//            return f;
+//        }
+//
+//        public String getText() {
+//            return text;
+//        }
+//    }
+
     private HaffmanTree constructHaffmanTree(HashMap map){
-        while(map.size()>0){
-            HaffmanTree left = getMin(map);
-            HaffmanTree right = getMin(map);
+        ArrayList<HaffmanTree> nodes = new ArrayList<>();
 
-            map.put(null,left.getF()+right.getF());
-            return new HaffmanTree(null,left.getF()+right.getF(),left,right);
-        }
-        return null;
-    }
-
-    private HaffmanTree getMin(HashMap map) {
         Iterator<HashMap.Entry<String,Integer>> iter = map.entrySet().iterator();
-        HashMap.Entry<String,Integer> entry;
-        String minkey = null;
-        int minValue=-1;
-        if(iter.hasNext()){
-            entry = iter.next();
-            minkey = entry.getKey();
-            minValue = entry.getValue();
-        }
 
+        HashMap.Entry<String,Integer> entry;
         while(iter.hasNext()){
             entry = iter.next();
-            int value = entry.getValue();
-            if(minValue>value) {
-                minkey = entry.getKey();
-                minValue = value;
+            nodes.add(new HaffmanTree(entry.getKey(),entry.getValue(),null,null));
+        }
+
+
+        while(nodes.size()>0){
+            HaffmanTree left = getMin(nodes);
+            HaffmanTree right = getMin(nodes);
+
+            nodes.add(new HaffmanTree(null,left.getF()+right.getF(),left,right));
+
+            if (nodes.size()==1)
+                break;
+        }
+        return nodes.get(0);
+    }
+
+//    private HaffmanTree getMin(HashMap map) {
+//        Iterator<HashMap.Entry<String,Integer>> iter = map.entrySet().iterator();
+//        HashMap.Entry<String,Integer> entry;
+//        String minkey = null;
+//        int minValue=-1;
+//        if(iter.hasNext()){
+//            entry = iter.next();
+//            minkey = entry.getKey();
+//            minValue = entry.getValue();
+//        }
+//
+//        while(iter.hasNext()){
+//            entry = iter.next();
+//            int value = entry.getValue();
+//            if(minValue>value) {
+//                minkey = entry.getKey();
+//                minValue = value;
+//            }
+//        }
+//        map.remove(minkey);
+//        return new HaffmanTree(minkey,minValue,null,null);
+//    }
+    private HaffmanTree getMin(ArrayList<HaffmanTree> list) {
+
+        Iterator<HaffmanTree> iter = list.iterator();
+        HaffmanTree tempNode;
+        HaffmanTree minNode = list.get(0);
+        while(iter.hasNext()){
+            tempNode = iter.next();
+            if(tempNode.getF()<minNode.getF()) {
+                minNode = tempNode;
             }
         }
-        map.remove(minkey);
-        return new HaffmanTree(minkey,minValue,null,null);
+        list.remove(minNode);
+        return minNode;
     }
 
 
-    private LinkedHashMap<String,Integer> constructMap(String text) {
-        map = new LinkedHashMap<String,Integer>();
+    private HashMap<String,Integer> constructMap(String text) {
+        map = new HashMap<String,Integer>();
         for (int i = 0; i<text.length(); ++i) {
             String word = String.valueOf(text.charAt(i));
             if (map.containsKey(word)) {

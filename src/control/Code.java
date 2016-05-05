@@ -2,6 +2,7 @@ package control;
 
 import haffman.Rule;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -42,7 +43,8 @@ public class Code {
 
         while(iter.hasNext()){
             entry = iter.next();
-            sb.append(entry.getKey()+" >>>>>> "+entry.getValue()+"\n");
+            sb.append(String.format("%20s           >>>>>>           %s\n",entry.getKey(),entry.getValue()));
+//            sb.append(entry.getKey()+"%-55s>>>>>>   "+entry.getValue()+"\n");
         }
 
         ruleText = sb.toString();
